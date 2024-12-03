@@ -80,11 +80,6 @@ make
 
 #### Step 3: Build the MPI Command
 
-- **Key Parameters**:
-  - `-n`: Total number of processes.
-  - `--map-by`: Process distribution strategy.
-  - Validation: Use `hostname` or `--report-bindings` to verify allocation.
-
 #### Common Scenarios
 
 | **Scenario**                | **Description**                                           |
@@ -98,7 +93,7 @@ make
 #### Generic Scenario: Flexible Command Structure
 
 ```bash
-salloc -N <num_nodes> --exclusive mpirun --map-by ppr:<processes_per_unit>:<unit> ./a.out
+salloc -n <total_process> -N <num_nodes> --exclusive mpirun --map-by ppr:<processes_per_unit>:<unit> ./a.out
 ```
 
 Replace `<processes_per_unit>`:
