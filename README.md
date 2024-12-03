@@ -59,6 +59,32 @@ To compile the code, run the following command:
 make
 ```
 
+Tree structure:
+
+```plaintext
+.
+├── bin
+│   ├── stencil_hybrid
+│   ├── stencil_mpi
+│   ├── stencil_omp
+│   └── stencil_seq
+├── build
+│   ├── stencil_hybrid.o
+│   ├── stencil_mpi.o
+│   ├── stencil_omp.o
+│   └── stencil_seq.o
+├── LICENSE
+├── Makefile
+├── module.sh
+├── README.md
+├── src
+│   ├── stencil_hybrid.c
+│   ├── stencil_mpi.c
+│   ├── stencil_omp.c
+│   └── stencil_seq.c
+└── tests
+```
+
 ### 0.2 General Method for Creating an MPI Scenario
 
 #### Step 1: Understand the Cluster Architecture

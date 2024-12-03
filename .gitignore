@@ -1,6 +1,8 @@
 *.png
 *.txt
 
+build/*
+buin/*
 
 stencil_seq
 stencil_mpi
