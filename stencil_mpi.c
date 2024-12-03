@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#define STENCIL_SIZE 2
+// #define STENCIL_SIZE 2
 
 typedef float stencil_t;
 
@@ -20,8 +20,8 @@ static const int stencil_max_steps = 100000;
 static stencil_t *values = NULL;
 static stencil_t *prev_values = NULL;
 
-static int size_x = STENCIL_SIZE;
-static int size_y = STENCIL_SIZE;
+static int size_x; // = STENCIL_SIZE;
+static int size_y; // = STENCIL_SIZE;
 
 /** init stencil values to 0, borders to non-zero */
 static void stencil_init(void) {
@@ -86,6 +86,19 @@ static int stencil_step(void) {
 }
 
 int main(int argc, char **argv) {
+  /* Parse stencil size from arguments or set default */
+  int stencil_size = 20;
+  if (argc > 1) {
+    stencil_size = atoi(argv[1]);
+    if (stencil_size < 2) {
+      fprintf(stderr, "Stencil size must be >= 2. Using default (20).\n");
+      stencil_size = 2;
+    }
+  }
+
+  size_x = stencil_size;
+  size_y = stencil_size;
+
   stencil_init();
   printf("# init:\n");
   stencil_display(0, size_x - 1, 0, size_y - 1);
