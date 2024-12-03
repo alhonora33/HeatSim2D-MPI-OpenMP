@@ -2,13 +2,10 @@ CC      = gcc
 CFLAGS += -Wall -g -O4
 LDLIBS += -lm -lrt
 
-all: stencil
+all: stencil_seq stencil_mpi
 
 clean:
-	-rm stencil
+	-rm stencil_seq stencil_mpi
 
 mrproper: clean
 	-rm *~
-
-archive: stencil.c Makefile
-	( cd .. ; tar czf stencil.tar.gz stencil/ )

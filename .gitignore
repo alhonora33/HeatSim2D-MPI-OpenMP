@@ -2,5 +2,7 @@
 *.txt
 
 
-stencil
+stencil_seq
+stencil_mpi
+
 
