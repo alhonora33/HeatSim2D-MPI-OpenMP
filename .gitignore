@@ -2,9 +2,8 @@
 *.txt
 
 build/*
-buin/*
+bin/*
 
-stencil_seq
-stencil_mpi
+
 
 
