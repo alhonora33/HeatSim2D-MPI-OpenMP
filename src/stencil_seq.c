@@ -35,11 +35,11 @@ static void stencil_init(void) {
   }
   for (x = 0; x < size_x; x++) {
     values[x + size_x * 0] = x;
-    values[x + size_x * (size_y - 1)] = size_x - x;
+    values[x + size_x * (size_y - 1)] = size_x - 1 - x;
   }
   for (y = 0; y < size_y; y++) {
     values[0 + size_x * y] = y;
-    values[size_x - 1 + size_x * y] = size_y - y;
+    values[(size_x - 1) + size_x * y] = size_y - 1 - y;
   }
   memcpy(prev_values, values, size_x * size_y * sizeof(stencil_t));
 }

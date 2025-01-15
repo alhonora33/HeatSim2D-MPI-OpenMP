@@ -106,16 +106,6 @@ Tree structure:
 
 #### Step 3: Build the MPI Command
 
-#### Common Scenarios
-
-| **Scenario**                | **Description**                                           |
-| --------------------------- | --------------------------------------------------------- |
-| **1 Process per Core**      | Maximizes core usage.                                     |
-| **Specific Process Count**  | Allocate a fixed number of processes, distributed evenly. |
-| **1 Process per Node**      | Memory-intensive tasks with minimal process usage.        |
-| **N Processes per Node**    | Adjust parallelism by controlling processes per node.     |
-| **Processes per NUMA Node** | Reduces memory latency for NUMA-sensitive applications.   |
-
 #### Generic Scenario: Flexible Command Structure
 
 ```bash
