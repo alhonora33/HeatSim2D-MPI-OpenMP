@@ -163,6 +163,22 @@ mpirun --report-bindings ./a.out
 
 ## Step 1: Understanding the Sequential Version
 
+```bash
+❯ ./bin/stencil_seq 4
+init:
+       0        1        2        3
+       1        0        0        2
+       2        0        0        1
+       3        2        1        0
+steps = 157
+time = 1.26 usecs.
+gflops = 11.9619
+       0        1        2        3
+       1    1.331   1.6643        2
+       2   1.6643    1.331        1
+       3        2        1        0
+```
+
 ### 1.1: Code Overview
 
 The initial step is to understand the sequential version of the code.  
@@ -197,3 +213,5 @@ These optimizations would be indispensable in production-level code, but we will
 Additionally, this code does not aim to replicate physical reality accurately or calibrate the model for precise simulations.
 
 The objective is to focus solely on MPI and OpenMP.
+
+---
