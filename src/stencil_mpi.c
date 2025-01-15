@@ -4,6 +4,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <mpi.h>
+#include <unistd.h>
+
 // #define STENCIL_SIZE 2
 
 typedef float stencil_t;
@@ -35,11 +38,11 @@ static void stencil_init(void) {
   }
   for (x = 0; x < size_x; x++) {
     values[x + size_x * 0] = x;
-    values[x + size_x * (size_y - 1)] = size_x - x;
+    values[x + size_x * (size_y - 1)] = size_x - 1 - x;
   }
   for (y = 0; y < size_y; y++) {
     values[0 + size_x * y] = y;
-    values[size_x - 1 + size_x * y] = size_y - y;
+    values[size_x - 1 + size_x * y] = size_y - 1 - y;
   }
   memcpy(prev_values, values, size_x * size_y * sizeof(stencil_t));
 }
@@ -86,6 +89,19 @@ static int stencil_step(void) {
 }
 
 int main(int argc, char **argv) {
+  int worldsize, rank;
+  char hostname[256];
+
+  MPI_Init(&argc, &argv);               // Initialisation de MPI
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Obtenir le rang du processus
+  MPI_Comm_size(MPI_COMM_WORLD,
+                &worldsize); // Obtenir le nombre total de processus
+
+  gethostname(hostname, sizeof(hostname));
+  printf("Rank %d/%d on host %s\n", rank + 1, worldsize, hostname);
+
+  MPI_Finalize(); // Terminer MPI
+
   /* Parse stencil size from arguments or set default */
   int stencil_size = 20;
   if (argc > 1) {
