@@ -1,9 +1,11 @@
 *.png
 *.txt
+*.err
+*.out
+*.log
+
+cachegrind.out.*
+
 
 build/*
 bin/*
-
-
-
-

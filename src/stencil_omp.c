@@ -88,25 +88,50 @@ static int stencil_step(void) {
   return convergence;
 }
 
+static int stencil_step_omp(void) {
+  int convergence = 1;
+  stencil_t *tmp = prev_values;
+  prev_values = values;
+  values = tmp;
+  int x, y;
+  for (y = 1; y < size_y - 1; y++) {
+    for (x = 1; x < size_x - 1; x++) {
+      values[x + size_x * y] =
+          alpha * (prev_values[x - 1 + size_x * y] +
+                   prev_values[x + 1 + size_x * y] +
+                   prev_values[x + size_x * (y - 1)] +
+                   prev_values[x + size_x * (y + 1)]) +
+          (1.0 - 4.0 * alpha) * prev_values[x + size_x * y];
+      if (convergence && fabs(prev_values[x + size_x * y] -
+                              values[x + size_x * y]) > epsilon) {
+        convergence = 0;
+      }
+    }
+  }
+  return convergence;
+}
+
 int main(int argc, char **argv) {
 
-  char hostname[256];
-  gethostname(hostname, sizeof(hostname));
+  int stencil_size = 10;
+  int test_mode = 0;
 
-#pragma omp parallel
-  {
-    int n = omp_get_thread_num();
-    int total_threads = omp_get_num_threads();
-    printf("Thread %d/%d on host %s\n", n + 1, total_threads, hostname);
+  int opt;
+  while ((opt = getopt(argc, argv, "t")) != -1) {
+    switch (opt) {
+    case 't':
+      test_mode = 1;
+      break;
+    default:
+      fprintf(stderr, "Usage: %s [stencil size] [-t]\n", argv[0]);
+      return EXIT_FAILURE;
+    }
   }
-
-  /* Parse stencil size from arguments or set default */
-  int stencil_size = 20;
-  if (argc > 1) {
-    stencil_size = atoi(argv[1]);
+  if (optind < argc) {
+    stencil_size = atoi(argv[optind]);
     if (stencil_size < 2) {
-      fprintf(stderr, "Stencil size must be >= 2. Using default (20).\n");
-      stencil_size = 2;
+      fprintf(stderr, "Stencil size must be >= 2. Using default (10).\n");
+      stencil_size = 10;
     }
   }
 
@@ -115,13 +140,12 @@ int main(int argc, char **argv) {
 
   stencil_init();
   printf("# init:\n");
-  stencil_display(0, size_x - 1, 0, size_y - 1);
 
   struct timespec t1, t2;
   clock_gettime(CLOCK_MONOTONIC, &t1);
   int s;
   for (s = 0; s < stencil_max_steps; s++) {
-    int convergence = stencil_step();
+    int convergence = stencil_step_omp();
     if (convergence) {
       break;
     }
@@ -129,11 +153,45 @@ int main(int argc, char **argv) {
   clock_gettime(CLOCK_MONOTONIC, &t2);
   const double t_usec =
       (t2.tv_sec - t1.tv_sec) * 1000000.0 + (t2.tv_nsec - t1.tv_nsec) / 1000.0;
+  printf("# size = %d\n", stencil_size);
   printf("# steps = %d\n", s);
   printf("# time = %g usecs.\n", t_usec);
   printf("# gflops = %g\n", (6.0 * size_x * size_y * s) / (t_usec * 1000));
-  stencil_display(0, size_x - 1, 0, size_y - 1);
-  stencil_free();
 
+  if (test_mode) {
+    printf("Test mode\n");
+    stencil_display(0, size_x - 1, 0, size_y - 1);
+    stencil_t *test_values = malloc(size_x * size_y * sizeof(stencil_t));
+    memcpy(test_values, values, size_x * size_y * sizeof(stencil_t));
+    stencil_free();
+    stencil_init();
+    for (s = 0; s < stencil_max_steps; s++) {
+      int convergence = stencil_step();
+      if (convergence) {
+        break;
+      }
+    }
+
+    int mismatch = 0;
+    int x, y;
+    for (x = 0; x < size_x; x++) {
+      for (y = 0; y < size_y; y++) {
+        if (fabs(values[x + size_x * y] - test_values[x + size_x * y]) >
+            epsilon) {
+          mismatch = 1;
+          printf("Mismatch at (%d, %d): seq = %g, test = %g\n", x, y,
+                 values[x + size_x * y], test_values[x + size_x * y]);
+        }
+      }
+    }
+    if (mismatch) {
+      printf("Results do not match! Expected:\n");
+      stencil_display(0, size_x - 1, 0, size_y - 1);
+    } else {
+      printf("Results match perfectly.\n");
+    }
+    free(test_values);
+  }
+  stencil_free();
   return 0;
 }

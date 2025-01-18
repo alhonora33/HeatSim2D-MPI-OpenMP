@@ -1,6 +1,6 @@
 # Compiler and Flags
 CC = gcc
-CFLAGS = -Wall -g -O4 -fopenmp
+CFLAGS = -Wall -g -O0 -fopenmp
 LDLIBS = -lm -lrt -lmpi
 
 # Directories
