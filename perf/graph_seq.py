@@ -8,7 +8,7 @@ N_L1 = 60  # Limite pour le cache L1
 N_109 = 109  # convergence par step
 
 # Fichier de test
-file_path = "stencil_seq_1395628.out"
+file_path = "stencil_seq_1397490.out"
 
 # Structure de données pour stocker les résultats
 results = defaultdict(lambda: {"steps": [], "time": [], "gflops": []})
@@ -89,7 +89,7 @@ ax2.plot(Ns, steps_avg, label="Steps", color=color)
 ax2.tick_params(axis='y', labelcolor=color)
 
 # Ajoute la limite convergence
-plt.axvline(N_109, color="purple", linestyle="--", label="N=109 : Convergence")
+plt.axvline(N_109, color="purple", linestyle="--", label="N=109 : Max steps")
 
 # Ajoure la limite L1
 plt.axvline(N_L1, color="red", linestyle="--", label="N=60 : Limite L1")
@@ -123,7 +123,7 @@ plt.axvline(N_L1, color="red", linestyle="--", label="N=60 : Limite L1")
 plt.axvline(N_48, color="green", linestyle="--", label="N=48 : Valeur optimale")
 
 # Ajoute la limite convergence
-plt.axvline(N_109, color="purple", linestyle="--", label="N=109 : Convergence")
+plt.axvline(N_109, color="purple", linestyle="--", label="N=109 : Max steps")
 
 # Ajouter une légende pour les limites
 plt.legend()

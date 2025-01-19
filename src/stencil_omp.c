@@ -66,7 +66,6 @@ static void stencil_display(int x0, int x1, int y0, int y1) {
 /** compute the next stencil step, return 1 if computation has converged */
 static int stencil_step(void) {
   int convergence = 1;
-  /* switch buffers */
   stencil_t *tmp = prev_values;
   prev_values = values;
   values = tmp;
@@ -93,17 +92,18 @@ static int stencil_step_omp(void) {
   stencil_t *tmp = prev_values;
   prev_values = values;
   values = tmp;
-  int x, y;
-  for (y = 1; y < size_y - 1; y++) {
-    for (x = 1; x < size_x - 1; x++) {
+#pragma omp parallel for collapse(2) reduction(& : convergence)
+  for (int y = 1; y < size_y - 1; y++) {
+    for (int x = 1; x < size_x - 1; x++) {
       values[x + size_x * y] =
           alpha * (prev_values[x - 1 + size_x * y] +
                    prev_values[x + 1 + size_x * y] +
                    prev_values[x + size_x * (y - 1)] +
                    prev_values[x + size_x * (y + 1)]) +
           (1.0 - 4.0 * alpha) * prev_values[x + size_x * y];
-      if (convergence && fabs(prev_values[x + size_x * y] -
-                              values[x + size_x * y]) > epsilon) {
+
+      if (fabs(prev_values[x + size_x * y] - values[x + size_x * y]) >
+          epsilon) {
         convergence = 0;
       }
     }

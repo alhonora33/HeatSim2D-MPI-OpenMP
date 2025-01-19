@@ -7,8 +7,6 @@
 #include <getopt.h>
 #include <unistd.h>
 
-// #define STENCIL_SIZE 2
-
 typedef float stencil_t;
 
 /** conduction coeff used in computation */
@@ -129,6 +127,7 @@ int main(int argc, char **argv) {
   size_x = stencil_size;
   size_y = stencil_size;
   stencil_init();
+
   printf("# init:\n");
 
   // Display initial stencil

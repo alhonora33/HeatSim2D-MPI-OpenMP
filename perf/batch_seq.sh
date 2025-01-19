@@ -18,7 +18,7 @@ cd $SLURM_SUBMIT_DIR
 make clean && make
 
 # Segment 1 : 20 à 64 (10 répétitions, pas de 1)
-for N in $(seq 20 1 64); do
+for N in $(seq 3 1 64); do
     for i in {1..10}; do
         srun --cpu-bind=cores ./bin/stencil_seq $N
     done
@@ -26,5 +26,9 @@ done
 
 # Segment 2 : 64 à 120 (1 répétition, pas de 1)
 for N in $(seq 64 1 120); do
-    srun --cpu-bind=cores ./bin/stencil_seq $N
+    for i in {1..3}; do
+        srun --cpu-bind=cores ./bin/stencil_seq $N
+    done
 done
+
+make clean
